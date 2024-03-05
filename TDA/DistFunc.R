@@ -9,14 +9,9 @@ by <- 0.065
 Xseq <- seq(Xlim[1], Xlim[2], by = by)
 Yseq <- seq(Ylim[1], Ylim[2], by = by)
 Grid <- expand.grid(Xseq, Yseq)
-# Grid%>%ggplot()+geom_point(aes(Var1, Var2))
-# par(mfrow = c(2, 2))
-distance <- distFct(X = X, Grid = Grid)
-persp(Xseq, Yseq,
-      matrix(distance, ncol = length(Yseq), nrow = length(Xseq)), xlab = "",
-      ylab = "", zlab = "", theta = -20, phi = 35, ltheta = 50,
-      col = 2, border = NA, main = "distance", d = 0.5, scale = FALSE,
-      expand = 3, shade = 0.9)
+par(mfrow = c(1, 2))
+plot(X, col = 2, pch = 19, cex = 1.5)
+plot(Grid, col = 2, pch = 19, cex = 1.5)
 
 m0 <- 0.1
 # distance to measure
@@ -27,7 +22,7 @@ persp(Xseq, Yseq,
       col = 2, border = NA, main = "DTM", d = 0.5, scale = FALSE,
       expand = 3, shade = 0.9)
 k <- 60
-# e k Nearest Neighbor density estimator
+# k Nearest Neighbor density estimator
 kNN <- knnDE(X = X, Grid = Grid, k = k)
 persp(Xseq, Yseq,
       matrix(kNN, ncol = length(Yseq), nrow = length(Xseq)), xlab = "",
@@ -43,13 +38,25 @@ persp(Xseq, Yseq,
       col = 2, border = NA, main = "KDE", d = 0.5, scale = FALSE,
       expand = 3, shade = 0.9)
 
-h <- 0.3
 Kdist <- kernelDist(X = X, Grid = Grid, h = h)
 persp(Xseq, Yseq,
       matrix(Kdist, ncol = length(Yseq), nrow = length(Xseq)), xlab = "",
       ylab = "", zlab = "", theta = -20, phi = 35, ltheta = 50,
       col = 2, border = NA, main = "Kdist", d = 0.5, scale = FALSE,
       expand = 3, shade = 0.9)
+# Persistent Homology
+# 計算該平面的信賴區間
+band <- bootstrapBand(X = X, FUN = kde, Grid = Grid, B = 100,
+                      parallel = FALSE, alpha = 0.1, h = h)
+# 構造下層集或上層集的過濾
+DiagGrid <- gridDiag(
+  X = X, FUN = kde, h = 0.3, lim = cbind(Xlim, Ylim), by = by,
+  sublevel = FALSE, library = "Dionysus", location = TRUE,
+  printProgress = FALSE)
+plot(DiagGrid[["diagram"]], band = 2 * band[["width"]],
+    main = "KDE Diagram")
+
+
 
 data(iris)
 iris%>%ggplot()+geom_point(aes(Sepal.Length, Petal.Length, color = Species))
