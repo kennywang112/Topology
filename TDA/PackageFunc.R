@@ -70,7 +70,7 @@ DiagRips <- ripsDiag(X = Circles, maxdimension, maxscale,
                      library = c("GUDHI", "Dionysus"), location = TRUE, printProgress = FALSE)
 
 plot(Circles, col = 2, pch = 19, cex = 1.5)
-lines(DiagRips$deathLocation)
+# lines(DiagRips$deathLocation)
 plot(DiagRips[["diagram"]], main = "Rips Diagram")
 
 # Alpha Complex Persistence Diagram
@@ -135,20 +135,75 @@ par(mfrow = c(1, 2))
 plot(X, pch = 16, xlab = "",ylab = "")
 plot(DiagFltFun[["diagram"]], diagLim = c(0, 1))
 
-
 # Bottleneck and Wasserstein Distances
 Diag1 <- ripsDiag(Circle1, maxdimension = 1, maxscale = 5)
 Diag2 <- ripsDiag(Circle2, maxdimension = 1, maxscale = 5)
 print(bottleneck(Diag1[["diagram"]], Diag2[["diagram"]], dimension = 1))
 print(wasserstein(Diag1[["diagram"]], Diag2[["diagram"]], p = 2, dimension = 1))
+
+# Landscapes and Silhouettes
 maxscale <- 5
 tseq <- seq(0, maxscale, length = 1000) #domain
 Land <- landscape(DiagRips[["diagram"]], dimension = 1, KK = 1, tseq)
 Sil <- silhouette(DiagRips[["diagram"]], p = 1, dimension = 1, tseq)
 plot(tseq, Land, type = "l", xlab = "t", ylab = "Landscape")
 plot(tseq, Sil, type = "l", xlab = "t", ylab = "Silhouette")
+
+# Confidence Bands for Landscapes and Silhouettes
 N <- 4000
 XX1 <- circleUnif(N / 2)
 XX2 <- circleUnif(N / 2, r = 2) + 3
 X <- rbind(XX1, XX2)
+m <- 80 # subsample size
+n <- 10 # we will compute n landscapes using subsamples of size m
+tseq <- seq(0, maxscale, length = 500) #domain of landscapes
+Diags <- list() # here we store n Rips diags
+Lands <- matrix(0, nrow = n, ncol = length(tseq)) # here we store n landscapes
+for (i in seq_len(n)) {
+  subX <- X[sample(seq_len(N), m), ]
+  Diags[[i]] <- ripsDiag(subX, maxdimension = 1, maxscale = 5)
+  Lands[i, ] <- landscape(Diags[[i]][["diagram"]], dimension = 1,
+                            KK = 1, tseq)
+  }
+bootLand <- multipBootstrap(Lands, B = 100, alpha = 0.05, parallel = FALSE)
+plot(tseq, bootLand[["mean"]], main = "Mean Landscape with 95% band")
+polygon(c(tseq, rev(tseq)),
+        c(bootLand[["band"]][, 1], rev(bootLand[["band"]][, 2])),
+        col = "pink")
+lines(tseq, bootLand[["mean"]], lwd = 2, col = 2)
+plot(X, col = 2, pch = 19, cex = 1.5)
+
+# Selection of Smoothing Parameter
+XX1 <- circleUnif(600)
+XX2 <- circleUnif(1000, r = 1.5) + 2.5
+noise <- cbind(runif(80, -2, 5), runif(80, -2, 5))
+X <- rbind(XX1, XX2, noise)
+Xlim <- c(-2, 5)
+Ylim <- c(-2, 5)
+by <- 0.2
+parametersKDE <- seq(0.1, 0.6, by = 0.05)
+B <- 50 # number of bootstrap iterations. Should be large.
+alpha <- 0.1 # level of the confidence bands
+maxKDE <- maxPersistence(kde, parametersKDE, X,
+                         lim = cbind(Xlim, Ylim), by = by, sublevel = FALSE,
+                         B = B, alpha = alpha, parallel = TRUE,
+                         printProgress = TRUE, bandFUN = "bootstrapBand")
+print(summary(maxKDE))
+plot(X, pch = 16, cex = 0.5, main = "Two Circles")
+plot(maxKDE, main = "Max Persistence - KDE")
+
+# Density Clustering
+X1 <- cbind(rnorm(300, 1, .8), rnorm(300, 5, 0.8))
+X2 <- cbind(rnorm(300, 3.5, .8), rnorm(300, 5, 0.8))
+X3 <- cbind(rnorm(300, 6, 1), rnorm(300, 1, 1))
+XX <- rbind(X1, X2, X3)
+Tree <- clusterTree(XX, k = 100, density = "knn",
+                    printProgress = FALSE)
+TreeKDE <- clusterTree(XX, k = 100, h = 0.3, density = "kde",
+                       printProgress = FALSE)
+par(mfrow = c(2, 2))
+plot(Tree, type = "lambda", main = "lambda Tree (knn)")
+plot(Tree, type = "kappa", main = "kappa Tree (knn)")
+plot(TreeKDE, type = "lambda", main = "lambda Tree (kde)")
+plot(TreeKDE, type = "kappa", main = "kappa Tree (kde)")
 
