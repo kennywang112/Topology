@@ -33,7 +33,7 @@ band <- bootstrapBand(X = Xiris, FUN = kde, Grid = Grid, B = 100,
                       parallel = FALSE, alpha = 0.1, h = 0.3)
 # rips diagram
 DiagRips <- ripsDiag(
-  X = Xiris, 1, 1, library = c("GUDHI", "Dionysus"), location = TRUE, printProgress = FALSE)
+  X = Xiris, maxdimension = 1, maxscale = 1, library = c("GUDHI", "Dionysus"), location = TRUE, printProgress = TRUE)
 plot(DiagRips[["diagram"]], band = 2 * band[["width"]], main = "Rips Diagram")
 # alpha comploex diagram and loop
 DiagAlphaCmplx <- alphaComplexDiag(
