@@ -14,7 +14,7 @@ Grid <- expand.grid(Xseq, Yseq)
 ```
 提供的程式碼`X`生成了兩個欄位分別是xy軸，並且並且`Xlim`和`Ylim`設定範圍並依照每步`by`來生成`seq`，最後`Grid`生成均勻分布的正方體，為之後的三維作圖鋪陳。
 
-<img src="../Images/tda1.png" alt="描述" width="500" height="300"></img>
+<img src="../Images/TDA_images/tda1.png" alt="描述" width="500" height="300"></img>
 
 對於三維作圖提供了幾個距離/密度的算法
 1. distance to measure (DTM)
@@ -38,7 +38,7 @@ DiagGrid <- gridDiag(
 plot(DiagGrid[["diagram"]], band = 2 * band[["width"]],
     main = "KDE Diagram")
 ```
-<img src="../Images/kde_diag.png" alt="描述" width="300" height="300"></img>
+<img src="../Images/TDA_images/kde_diag.png" alt="描述" width="300" height="300"></img>
 
 ### 條碼圖(Barcode)
 這張圖注意到X軸為time，也就是當掃描不同尺度(scale)的分析中拓樸特徵隨時間的產生以及消失，每個水平線都代表了一個特徵，左端為"出生"，右端為"死亡"，分別為它在過濾過程中首次出現的比例以及特徵不再存在的比例。
@@ -47,7 +47,7 @@ plot(DiagGrid[["diagram"]], band = 2 * band[["width"]],
 plot(DiagGrid[["diagram"]], barcode = TRUE, main = "Barcode")
 ```
 
-<img src="../Images/barcode.png" alt="描述" width="300" height="300"></img>
+<img src="../Images/TDA_images/barcode.png" alt="描述" width="300" height="300"></img>
 
 ### Rips diagram
 **Vietoris-Rips complex**是由頂點位於X且直徑最多ε的**單純形(simplicial complex)**所組成，或是說如果單純形σ中的每個頂點間距離都不超過ε，那麼這個σ就會被包含在該complex中，透過逐漸增加半徑ε，獲得Rips complex序列創建一個**過濾**
@@ -63,7 +63,7 @@ DiagRips <- ripsDiag(X = Circles, maxdimension, maxscale,
 plot(Circles, col = 2, pch = 19, cex = 1.5)
 ```
 
-<img src="../Images/rips.png" alt="描述" width="500" height="300"></img>
+<img src="../Images/TDA_images/rips.png" alt="描述" width="500" height="300"></img>
 
 
 ### Alpha Complex Persistence Diagram
@@ -91,7 +91,7 @@ for (i in seq(along = one)) {
 }
 ```
 
-<img src="../Images/alpha_complex.png" alt="描述" width="500" height="300"></img>
+<img src="../Images/TDA_images/alpha_complex.png" alt="描述" width="500" height="300"></img>
 
 ### Persistence Diagram of Alpha Shape
 該方法的建構先觀察不同半徑α的球體如何與點雲交互來確定那些單純形應該包括在內，當球體半徑小到不能圍繞任何子集的時候停止。
@@ -115,7 +115,7 @@ for (i in seq(along = one)) {
 }
 ```
 
-<img src="../Images/alpha_shape.png" alt="描述" width="500" height="300"></img>
+<img src="../Images/TDA_images/alpha_shape.png" alt="描述" width="500" height="300"></img>
 
 ### Persistence Diagrams from Filtration
 除了**ripsDiag、alphaComplexDiag和alphaShapeDia**計算持久特徵圖之外，也可以先計算過濾，而過濾可使用**ripsFiltration、alphaComplexFiltration和alphaShapeFiltration**
@@ -142,7 +142,7 @@ for (i in seq(along = one)) {
   }
 ```
 
-<img src="../Images/alpha_shape_filtration.png" alt="描述" width="500" height="300"></img>
+<img src="../Images/TDA_images/alpha_shape_filtration.png" alt="描述" width="500" height="300"></img>
 
 ### Bottleneck and Wasserstein Distances
 描述如何使用瓶頸距離(Bottleneck Distance)和Wasserstein距離比較持久性圖之間的相似或差異
@@ -176,7 +176,7 @@ plot(tseq, Land, type = "l", xlab = "t", ylab = "Landscape")
 plot(tseq, Sil, type = "l", xlab = "t", ylab = "Silhouette")
 ```
 
-<img src="../Images/landscape_silhouettes.png" alt="描述" width="500" height="300"></img>
+<img src="../Images/TDA_images/landscape_silhouettes.png" alt="描述" width="500" height="300"></img>
 
 ### Confidence Bands for Landscapes and Silhouettes
 這段主要介紹如何使用boostrap算法來**為Landscapes和Silhouettes構建信賴區間(Confidence Bands)**，適合用在處理大型的資料，因為當計算整個數據的持久性圖時成本可能過高，所以通過**子樣本**的方式估計整體持久性特徵。
@@ -206,7 +206,7 @@ lines(tseq, bootLand[["mean"]], lwd = 2, col = 2)
 plot(X, col = 2, pch = 19, cex = 1.5)
 ```
 
-<img src="../Images/conf_land_sil.png" alt="描述" width="500" height="300"></img>
+<img src="../Images/TDA_images/conf_land_sil.png" alt="描述" width="500" height="300"></img>
 
 ### Selection of Smoothing Parameters
 討論在拓樸推斷中**選擇平滑參數**(如KDE的h和DTM中的m0)的方法。通過比較不同平滑程度(h的值)下的持久性圖來找到最能反映數據重要拓樸特徵的平滑參數，方法依賴兩個度量:
@@ -235,7 +235,7 @@ plot(X, pch = 16, cex = 0.5, main = "Two Circles")
 plot(maxKDE, main = "Max Persistence - KDE")
 ```
 
-<img src="../Images/smoothing.png" alt="描述" width="500" height="300"></img>
+<img src="../Images/TDA_images/smoothing.png" alt="描述" width="500" height="300"></img>
 
 ## Density Clustering
 介紹如何使用clusterTree函數實現基於**密度聚類的樹形結構**。這是一種根據樣本點在數據空間中的密度分布來進行聚類的方法，通過定義一個閾值λ，可以確定超級水平集和高密度區域，從而識別促具的高密度聚類。
@@ -259,4 +259,4 @@ plot(TreeKDE, type = "lambda", main = "lambda Tree (kde)")
 plot(TreeKDE, type = "kappa", main = "kappa Tree (kde)")
 ```
 
-<img src="../Images/density_clustering.png" alt="描述" width="500" height="300"></img>
+<img src="../Images/TDA_images/density_clustering.png" alt="描述" width="500" height="300"></img>

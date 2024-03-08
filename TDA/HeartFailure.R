@@ -1,14 +1,15 @@
 library(TDA)
 library(tidyverse)
 
-data <- read_csv("/Users/wangqiqian/Desktop/Kaggle_Data/heart_failure_clinical_records_dataset.csv")
+data <- read_csv("../Kaggle_Data/heart_failure_clinical_records_dataset.csv")
 # Xiris <- iris%>%select(Sepal.Length, Petal.Length)
 data%>%colnames()
 data%>%summary()
 data <- data %>%
   mutate(across(c(age, creatinine_phosphokinase, ejection_fraction, 
                   platelets, serum_creatinine, serum_sodium, time), scale))
-Xdata <- data%>%select(creatinine_phosphokinase, ejection_fraction)
+Xdata <- data%>%select(serum_creatinine, serum_sodium)
+ggplot(data) + geom_point(aes(serum_creatinine, serum_sodium, color = as.character(DEATH_EVENT)))
 Xlim <- c(-1, 1)
 Ylim <- c(-1, 1)
 by <- 0.05
@@ -18,6 +19,7 @@ Grid <- expand.grid(Xseq, Yseq)
 par(mfrow = c(1, 2), bg = "gray")
 KDE <- kde(X = Xdata, Grid = Grid, h = 0.3)
 kNN <- knnDE(X = Xdata, Grid = Grid, k = 60)
+DTM <- dtm(X = Xdata, Grid = Grid, m0 = 0.1)
 persp(Xseq, Yseq,
       matrix(KDE, ncol = length(Yseq), nrow = length(Xseq)), xlab = "",
       ylab = "", zlab = "", theta = 30, phi = 20, ltheta = 50,
@@ -28,15 +30,31 @@ persp(Xseq, Yseq,
       ylab = "", zlab = "", theta = 30, phi = 20, ltheta = 50,
       border = NA, main = "kNN", d = 0.5, scale = FALSE, box = TRUE, col = "brown",
       expand = 3, shade = 0.9)
+persp(Xseq, Yseq,
+      matrix(DTM, ncol = length(Yseq), nrow = length(Xseq)), xlab = "",
+      ylab = "", zlab = "", theta = 30, phi = 20, ltheta = 50,
+      col = 2, border = NA, main = "DTM", d = 0.5, scale = FALSE,
+      expand = 3, shade = 0.9)
 
 band <- bootstrapBand(X = Xdata, FUN = kde, Grid = Grid, B = 100,
                      parallel = FALSE, alpha = 0.1, h = 0.3)
 # rips diagram
 DiagRips <- ripsDiag(
-  X = Xdata, maxdimension = 1, maxscale = 1, library = c("GUDHI", "Dionysus"), location = TRUE, printProgress = TRUE)
-plot(DiagRips[["diagram"]], band = 2 * band[["width"]], main = "Rips Diagram")
+  X = Xdata, maxdimension = 1, maxscale = 0.5, library = c("GUDHI", "Dionysus"), location = TRUE, printProgress = TRUE)
+# and from filtration
+FltRips <- ripsFiltration(
+  X = Xdata, maxdimension = 1, maxscale = 0.5, 
+  dist = "euclidean", library = "GUDHI", printProgress = TRUE)
+dtmValues <- dtm(X = Xdata, Grid = Xdata, m0 = 0.1)
+FltFun <- funFiltration(FUNvalues = dtmValues, cmplx = FltRips[["cmplx"]])
+DiagFltFun <- filtrationDiag(
+  filtration = FltFun, maxdimension = 1, 
+  library = "Dionysus", location = TRUE, printProgress = TRUE)
 
-# alpha comploex diagram and loop
+plot(DiagRips[["diagram"]], band = 2 * band[["width"]], main = "Rips Diagram")
+plot(DiagFltFun[["diagram"]], diagLim = c(0, 1), main = "Rips Diagram from Filtration")
+
+# alpha complex diagram and loop
 DiagAlphaCmplx <- alphaComplexDiag(
   X = Xdata, library = c("GUDHI", "Dionysus"), location = TRUE, printProgress = TRUE)
 plot(DiagAlphaCmplx[["diagram"]], band = 2 * band[["width"]], main = "Alpha Complex Diagram")
@@ -52,17 +70,7 @@ for (i in seq(along = one)) {
           cex = 1, col = i + 1)
   }
 }
-# Persistence Diagrams from Filtration
-FltRips <- ripsFiltration(
-  X = Xdata, maxdimension = 1, maxscale = 0.5, 
-  dist = "euclidean", library = "GUDHI", printProgress = TRUE)
-dtmValues <- dtm(X = Xdata, Grid = Xdata, m0 = 0.1)
-FltFun <- funFiltration(FUNvalues = dtmValues, cmplx = FltRips[["cmplx"]])
-DiagFltFun <- filtrationDiag(
-  filtration = FltFun, maxdimension = 1, 
-  library = "Dionysus", location = TRUE, printProgress = TRUE)
-plot(Xdata, pch = 16, xlab = "", ylab = "")
-plot(DiagFltFun[["diagram"]], diagLim = c(0, 1))
+
 
 
 
