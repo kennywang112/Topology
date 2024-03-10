@@ -9,7 +9,7 @@ normdiab <- chemdiab
 normdiab[,1:5] <- scale(normdiab[,1:5], center = FALSE)
 normdiab.dist <- dist(normdiab[,1:5])
 # Gaussian Kernel Density Estimator
-filter.kde <- kde(normdiab[,1:5], H = diag(1,nrow = 5), eval.points = normdiab[,1:5])$estimate
+filter.kde <- kde(normdiab[,1:5], H = diag(1, nrow = 5), eval.points = normdiab[,1:5])$estimate
 diab.mapper <- mapper(
   dist_object = normdiab.dist,
   filter_values = filter.kde,
@@ -19,7 +19,7 @@ diab.mapper <- mapper(
 diab.graph <- graph.adjacency(diab.mapper$adjacency, mode = "undirected")
 plot(diab.graph)
 
-l = length(V(diab.graph))
+l <- length(V(diab.graph))
 Mode <- function(x) {
   ux <- unique(x)
   ux[which.max(tabulate(match(x, ux)))]
@@ -27,17 +27,14 @@ Mode <- function(x) {
 # Distribution of the cc variable in each vertex Majority vote
 cc.maj.vertex <- c()
 filter.kde.vertex <- c()
-for (i in 1:l){
-  points.in.vertex <- diab.mapper$points_in_vertex[[i]]
-  Mode.in.vertex <- Mode(normdiab$cc[points.in.vertex])
-  cc.maj.vertex <- c(cc.maj.vertex, as.character(Mode.in.vertex))
-  filter.kde.vertex <- c(filter.kde.vertex, mean(filter.kde[points.in.vertex]))
-}
-
 vertex.size <- rep(0, l)
 for (i in 1:l){
   points.in.vertex <- diab.mapper$points_in_vertex[[i]]
-  vertex.size[i] <- length((diab.mapper$points_in_vertex[[i]]))
+  Mode.in.vertex <- normdiab$cc[points.in.vertex]%>%Mode()
+  cc.maj.vertex <- c(cc.maj.vertex, as.character(Mode.in.vertex))
+  filter.kde.vertex <- c(filter.kde.vertex, mean(filter.kde[points.in.vertex]))
+
+  vertex.size[i] <- diab.mapper$points_in_vertex[[i]]%>%length()
 }
 
 MapperNodes <- mapperVertices(diab.mapper, 1:nrow(normdiab) )
@@ -58,13 +55,15 @@ vertex.label <- c()
 cc.mapper <- c()
 for (ver in 1:l){
   points.in.vertex <- diab.mapper$points_in_vertex[[ver]]
-  vertex.label <- c(vertex.label,rep(ver,length(points.in.vertex)))
-  cc.mapper <- c(cc.mapper,chemdiab$cc[points.in.vertex])
+  vertex.label <- c(vertex.label, rep(ver, length(points.in.vertex)))
+  cc.mapper <- c(cc.mapper, chemdiab$cc[points.in.vertex])
 }
 
 vertex.label <- as.factor(vertex.label)
 cc.mapper <- as.factor(cc.mapper)
+# Blue indicate more observations than expected under independence
+# Red indicate fewer observations than expected 
+levels(cc.mapper) <- c("Chem", "Norm", "Overt")
+table(vertex.label, cc.mapper)
+mosaic(table(vertex.label, cc.mapper), shade = TRUE)
 
-levels(cc.mapper) <- c("Chem","Norm","Overt")
-table(vertex.label,cc.mapper)
-mosaic(table(vertex.label,cc.mapper),shade = TRUE)
