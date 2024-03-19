@@ -140,7 +140,7 @@ print(wasserstein(Diag1[["diagram"]], Diag2[["diagram"]], p = 2, dimension = 1))
 
 # Landscapes and Silhouettes
 maxscale <- 5
-tseq <- seq(0, maxscale, length = 1000) #domain
+tseq <- seq(0, maxscale, length = 1000) # domain
 Land <- landscape(DiagRips[["diagram"]], dimension = 1, KK = 1, tseq)
 Sil <- silhouette(DiagRips[["diagram"]], p = 1, dimension = 1, tseq)
 plot(tseq, Land, type = "l", xlab = "t", ylab = "Landscape")

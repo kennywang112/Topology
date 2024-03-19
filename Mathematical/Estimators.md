@@ -1,7 +1,8 @@
 ## Density Estimators over a Grid of Points
 
 ### Distance to Measure Function
- using the uniform empirical measure on a set of points `X`. Given a probability measure P, defined by 
+
+using the uniform empirical measure on a set of points `X`. Given a probability measure P, defined by
 
 $d_{m0}(y) = (1/m0 int_0^{m0} (G_y^{-1}(u))^{r} du)^{1/r}, y∈R^d$
 
@@ -11,21 +12,16 @@ $\hat d_{m0}(y) = (1/k ∑_{x_i in N_k(y)} ||x_i-y||^r)^{1/r}$
 
 where $k= \lceil m0 * n \rceil$ and $N_k(y)$ is the set containing the k nearest neighbors of y among $x_1, …, x_n$.
 
-`dtm(X, Grid, m0, r = 2, weight = 1)`
-- X : n(number) by d(dimension) matrix
-- Grid : m by d matrix, m is the number of points in the grid
-- $m0$ : $m0∈(0,1)$ represent smooth
-- $r$ : $r∈[1,∞)$ affects less but also changes the function
+`dtm(X, Grid, m0, r = 2, weight = 1)` - X : n(number) by d(dimension) matrix - Grid : m by d matrix, m is the number of points in the grid - $m0$ : $m0∈(0,1)$ represent smooth - $r$ : $r∈[1,∞)$ affects less but also changes the function
 
 ### k Nearest Neighbor density estimator
 
 $p_X (x) = k / (n * v_d * r_k^d(x)), x∈R^d$
 
-- $v_d$ : The volume of the Euclidean d dimensional unit ball
-- $r_k^d(x)$ :  Euclidean distance from point x to its k'th closest neighbor.
+-   $v_d$ : The volume of the Euclidean d dimensional unit ball
+-   $r_k^d(x)$ : Euclidean distance from point x to its k'th closest neighbor.
 
-`knnDE(X, Grid, k)`
-- $k$ : smoothing param
+`knnDE(X, Grid, k)` - $k$ : smoothing param
 
 ### Kernel Density Estimator over a Grid of Points
 
@@ -33,11 +29,7 @@ Given a point cloud `X` (n points), the function `kde` computes the Kernel Densi
 
 $p_X (x) = 1/(n (√(2π) h)^d) ∑_{i=1}^n exp( -(||x-X_i||^2)/(2h^2) )$
 
-`kde(X, Grid, h, kertype = "Gaussian", weight = 1, printProgress = FALSE)`:
-- h : the smoothing params of Gayssuab Kernal
-- kertype : Gaussian(default), Epanechnikov
-- weight : either a number, or a vector of length n. If it is a number, then same weight is applied to each points of `X`. If it is a vector, `weight` represents weights of each points of `X`. The default value is `1`
-- printProgress : default `FALSE`
+`kde(X, Grid, h, kertype = "Gaussian", weight = 1, printProgress = FALSE)`: - h : the smoothing params of Gayssuab Kernal - kertype : Gaussian(default), Epanechnikov - weight : either a number, or a vector of length n. If it is a number, then same weight is applied to each points of `X`. If it is a vector, `weight` represents weights of each points of `X`. The default value is `1` - printProgress : default `FALSE`
 
 ### Kernel distance over a Grid of Points
 

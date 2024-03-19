@@ -20,7 +20,7 @@ mapper_filter <- mapper(dist_object = euclidean_dist,
                        percent_overlap = 50,
                        num_bins_when_clustering = 10)
 
-mapper_graph <- graph.adjacency(mapper_filter$adjacency, mode="undirected")
+mapper_graph <- graph.adjacency(mapper_filter$adjacency, mode = "undirected")
 plot(mapper_graph, layout = layout.auto(mapper_graph) )
 
 y.mean.vertex <- rep(0, mapper_filter$num_vertices)

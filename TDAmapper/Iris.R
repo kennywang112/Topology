@@ -32,7 +32,7 @@ for (i in 1:l){
   vertex.size[i] <- iris.mapper$points_in_vertex[[i]]%>%length()
 }
 
-MapperNodes <- mapperVertices(iris.mapper, 1:nrow(iris) )
+MapperNodes <- mapperVertices(iris.mapper, 1:nrow(iris))
 MapperNodes$species.maj.vertex <- as.factor(species.maj.vertex)
 MapperNodes$filter.kde <- filter.kde.vertex
 MapperNodes$Nodesize <- vertex.size
@@ -42,7 +42,7 @@ forceNetwork(Nodes = MapperNodes, Links = MapperLinks,
              Source = "Linksource", Target = "Linktarget",
              Value = "Linkvalue", NodeID = "Nodename",
              Group = "species.maj.vertex", opacity = 1, 
-             linkDistance = 10, charge = -400,legend = TRUE,
+             linkDistance = 10, charge = -400, legend = TRUE,
              Nodesize = "Nodesize")  
 
 # we concatenate the values of cc and vertex.label for the points of all the vertices
