@@ -3,3 +3,5 @@
 .RData
 .Ruserdata
 Cool-Stuff.Rproj
+.DS_Store
+.ipynb_checkpoints

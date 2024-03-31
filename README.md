@@ -4,7 +4,8 @@
 Formula for estimators, these intros are from R studio document.
 
 ## TDA
-Full use of Topological data analysis in the package `TDA`, and real-world use in HeartFailure and Iris.
+1. Full use of Topological data analysis in the package `TDA`, and real-world use in HeartFailure and Iris.
+2. TDA for time series data
 
 ## MapperAlgorithm
 Mapper algorithm example and trefoil, torus data visualization, and real-world use in Diabetes and Iris.
