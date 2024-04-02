@@ -22,6 +22,19 @@ This model contributes to the topological understanding by showing how different
 
 In summary, this approach to analyzing image data using topology helps reveal the underlying structure of the image space. Barcodes from persistent homology provide a visualization of these structures and their **stability across scales**, and the primary and three-circle models offer a geometric interpretation of the high-density regions in the **manifold of image patches**.
 
+## <font color="#85b0d4">Barcode</font>
+Here's an overview of how image data is transformed into barcodes:
+
+- Data Set Construction: It starts with building a dataset from **high-contrast** image patches. These patches can be small segments of images selected based on their contrast levels.
+
+- Point Cloud Generation: The selected image patches are treated as points in a high-dimensional space, forming a **point cloud**. Each point represents an image patch, and the distances between points reflect their similarity or dissimilarity.
+
+- Filter Function Construction: A filter function is defined on the point cloud, assigning a value to each point based on some **criteria (like density estimation)**. This function aims to identify significant features in the data, such as **clusters or voids**.
+
+- Persistent Homology: This is applied to study how the topological features of the data (connected components, holes...) change as the filter values vary. This involves computing a series of nested subspaces (complexes) and analyzing the persistence of topological features across parameter changes.
+
+- Barcode Generation: Each bar represents a topological feature (like a hole), and the length of the bar indicates the range over which that feature persists as the filter values change. The position and length of bars provide important insights into the topological characteristics of the data.
+
 ## <font color="#85b0d4">Formula</font>
 **k-Codensity Function $δ_k$**:
 - This function is used as a measure of local density around a data point in a set $X$. The idea is to fix a positive integer $k$, and for each point $x$ in the data set $X$, find its $k-th$ nearest neighbor, denoted as $ν_k(x)$.
