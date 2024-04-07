@@ -2,10 +2,13 @@ library(TDA)
 library(tidyverse)
 
 data(iris)
-iris%>%ggplot()+geom_point(aes(Sepal.Length, Petal.Length, color = Species))
 Xiris <- iris%>%select(Sepal.Length, Petal.Length)
-Xiris$Sepal.Length%>%summary()
-Xiris$Petal.Length%>%summary()
+library(plotly)
+fig <- plot_ly(data = iris, x = ~Sepal.Length, y = ~Petal.Length, 
+               z = ~Sepal.Width,  type = 'scatter3d', mode = 'markers')
+fig <- fig %>% layout(title = 'Point Clouda')
+fig
+
 Xlim <- c(1, 8)
 Ylim <- c(1, 8)
 by <- 0.05
@@ -33,8 +36,10 @@ band <- bootstrapBand(X = Xiris, FUN = kde, Grid = Grid, B = 100,
                       parallel = FALSE, alpha = 0.1, h = 0.3)
 # rips diagram
 DiagRips <- ripsDiag(
-  X = Xiris, maxdimension = 1, maxscale = 1, library = c("GUDHI", "Dionysus"), location = TRUE, printProgress = TRUE)
-plot(DiagRips[["diagram"]], band = 2 * band[["width"]], main = "Rips Diagram")
+  X = Xiris, maxdimension = 1, maxscale = 1, 
+  library = c("GUDHI", "Dionysus"), location = TRUE, printProgress = TRUE)
+plot(DiagRips[["diagram"]], main = "Rips Diagram")
+# plot(DiagRips[["diagram"]], band = 2 * band[["width"]], main = "Rips Diagram")
 # alpha comploex diagram and loop
 DiagAlphaCmplx <- alphaComplexDiag(
   X = Xiris, library = c("GUDHI", "Dionysus"), location = TRUE, printProgress = TRUE)
