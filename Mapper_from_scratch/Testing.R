@@ -5,23 +5,17 @@ library(igraph)
 library(ks)
 setwd('./Mapper_from_scratch')
 getwd()
+source('EdgeVertices.R')
 source('MappingAlgo.R')
 
 data("iris")
-# scaled_columns <- scale(iris[, 2:5])
-# iris <- cbind(iris[, 1, drop = FALSE], scaled_columns)
-
-ggplot(iris)+geom_point(aes(x=Sepal.Length, y=Petal.Length, color = Species))
-# iris <- iris %>% select(species, sepal.len, petal.len)
-# filter.kde <- kde(iris[,1:4], H=diag(1, nrow = 4), eval.points=iris[,1:4], binned=FALSE)$estimate
 
 time_taken <- system.time({
   Traffic.mapper <- mapper(
-    dist_object = dist(iris[,1:4]),
     filter_values = iris[,1:4],
-    num_intervals = c(4,4,4,4),
+    intervals = 4,
     percent_overlap = 50,
-    num_bins_when_clustering = 20)
+    num_bins_when_clustering = 30)
 })
 time_taken
 
