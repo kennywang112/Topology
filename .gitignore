@@ -7,3 +7,5 @@ Cool-Stuff.Rproj
 .ipynb_checkpoints
 Data/*
 .git
+GCN/data
+GCN/Calculated_data
