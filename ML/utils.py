@@ -12,12 +12,15 @@ remove_infinity = lambda alpha_list: [alpha for alpha in alpha_list if alpha[1] 
 pca = PCA(n_components=2)
 
 def Compute_persistence(data_remove):
+    
     print(f"進程 {os.getpid()} 開始計算")
     result = ripser.ripser(data_remove, distance_matrix=True, maxdim=0)['dgms'][0]
     print(f"進程 {os.getpid()} 完成計算")
+    
     return result
 
 def Data_list(X_scaled):
+    
     data_list = []
     for i in range(X_scaled.shape[0]):
         if (i + 1) % 500 == 0:
@@ -26,9 +29,11 @@ def Data_list(X_scaled):
             
         data_remove = X_scaled.drop(index=i)
         data_list.append(data_remove)
+        
     return data_list
     
 def Compute_Alpha(data_remove):
+    
     # print(f"進程 {os.getpid()} 開始計算")
     
     # PCA
@@ -50,6 +55,7 @@ def Compute_Alpha(data_remove):
     return pe_normal
 
 def Compute_DR(data_remove):
+    
     # print(f"進程 {os.getpid()} 開始計算")
     
     # PCA
@@ -68,6 +74,7 @@ def Compute_DR(data_remove):
     return pe_normal
 
 def Compute_Alpha_from_Cechmate(data_remove):
+    
     # print(f"進程 {os.getpid()} 開始計算")
     
     # PCA
